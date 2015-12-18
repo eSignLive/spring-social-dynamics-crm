@@ -1,6 +1,8 @@
 package org.springframework.social.dynamicscrm.api.impl;
 
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.social.dynamicscrm.api.ODataOperations;
 import org.springframework.social.dynamicscrm.api.domain.odata.ODataQuery;
 import org.springframework.social.dynamicscrm.rest.RestService;
@@ -14,38 +16,31 @@ import java.net.URLEncoder;
  * @author paul_smelser@silanis.com
  */
 public class  ODataTemplate extends AbstractTemplate implements ODataOperations {
-
-    public static final String ORDER_BY = "$orderBy";
-    public static final String SKIP = "$skip";
-    public static final String TOP = "$top";
-    private static final String FILTER = "$filter=";
-    private static final String SELECT = "$select";
-
     private final RestService restService;
-    private boolean isAuthorized;
     private String baseUrl;
 
 
     public ODataTemplate(RestService restService, boolean isAuthorized, String baseUrl) {
+        super(isAuthorized);
         this.restService = restService;
-        this.isAuthorized = isAuthorized;
         this.baseUrl = baseUrl;
     }
 
     @Override
-    public <T, R> R save(String url, T entity, Class<R> responseType) {
-        checkAuthorization(isAuthorized);
-
-        return restService.post(baseUrl, url, new HttpEntity<T>(entity), responseType);
+    public <T, R> R post(String entityPath, T entity, Class<R> responseType) {
+        checkAuthorization();
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setContentType(MediaType.APPLICATION_JSON);
+        return restService.post(baseUrl, entityPath, new HttpEntity<T>(entity, responseHeaders), responseType);
     }
 
-    public <T> T get(String url, Class<T> responseType, ODataQuery oDataQuery){
-        checkAuthorization(isAuthorized);
+    public <T> T get(String entityPath, Class<T> responseType, ODataQuery oDataQuery){
+        checkAuthorization();
 
         if (oDataQuery != null) {
-            return restService.get(createUrl(url, oDataQuery), responseType);
+            return restService.get(createUrl(entityPath, oDataQuery), responseType);
         }
-        return restService.get(url, responseType);
+        return restService.get(entityPath, responseType);
     }
 
     String createUrl(String url, ODataQuery oDataQuery) {
