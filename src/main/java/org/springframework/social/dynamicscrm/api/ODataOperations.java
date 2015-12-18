@@ -6,6 +6,6 @@ package org.springframework.social.dynamicscrm.api;
  * @author paul_smelser@silanis.com
  */
 public interface ODataOperations {
-    <T, R> R save(String url, T entity, Class<R> returnClass);
+    <T, R> R post(String url, T entity, Class<R> returnClass);
 
 }

@@ -9,5 +9,4 @@ public interface DynamicsUrlProvider {
     String getApiUrl();
     String getOauth2AuthorizationUrl();
     String getOauth2TokenUrl();
-    String getUploadUrl();
 }

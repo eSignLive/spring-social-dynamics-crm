@@ -9,7 +9,12 @@ import org.springframework.social.dynamicscrm.api.DynamicsCrm;
  * @author paul_smelser@silanis.com
  */
 public class AbstractTemplate {
-    public void checkAuthorization(boolean isAuthorized){
+    private boolean isAuthorized;
+
+    protected AbstractTemplate(boolean isAuthorized){
+        this.isAuthorized = isAuthorized;
+    }
+    public void checkAuthorization(){
         if (!isAuthorized) {
             throw new MissingAuthorizationException(DynamicsCrm.PROVIDER_NAME);
         }

@@ -10,7 +10,7 @@ import org.springframework.social.dynamicscrm.api.DynamicsCrm;
  *
  * @author paul_smelser@silanis.com
  */
-public class DynamicsAdapter implements ApiAdapter<DynamicsCrm> {
+public class DynamicsCrmAdapter implements ApiAdapter<DynamicsCrm> {
     @Override
     public boolean test(DynamicsCrm dynamicsCrm) {
         return false;

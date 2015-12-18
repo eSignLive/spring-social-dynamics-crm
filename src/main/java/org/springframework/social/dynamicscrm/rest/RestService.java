@@ -35,6 +35,6 @@ public class RestService {
     }
 
     public <T, R> R post(String baseUrl, String url, HttpEntity<T> entity, Class<R> responseType) {
-        return restTemplate.exchange(URI.create(baseUrl + url), HttpMethod.POST, entity, responseType).getBody();
+            return restTemplate.exchange(URI.create(baseUrl + url), HttpMethod.POST, entity, responseType).getBody();
     }
 }

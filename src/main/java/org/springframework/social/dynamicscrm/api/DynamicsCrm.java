@@ -10,8 +10,5 @@ import org.springframework.web.client.RestTemplate;
  */
 public interface DynamicsCrm extends ApiBinding {
     String PROVIDER_NAME = "dynamics";
-
-    UserOperations userOperations();
     ODataOperations oDataOperations();
-    RestTemplate getRestTemplate();
 }
