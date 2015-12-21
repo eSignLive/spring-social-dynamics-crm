@@ -6,7 +6,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.social.dynamicscrm.rest.AuthorizeEndpoint;
 import org.springframework.social.support.ClientHttpRequestFactorySelector;
 import org.springframework.social.support.FormMapHttpMessageConverter;
 import org.springframework.util.Assert;
@@ -31,6 +30,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     private final int crmVersion;
     private boolean useParametersForClientAuthentication;
     private RestTemplate resource;
+    private OAuth2AuthorizeDiscoveryService discoveryService;
 
     public OAuth2DynamicsCrmTemplate(String clientId, String organizationId, int crmVersion, String clientSdkVersion) {
         this.crmVersion = crmVersion;
@@ -41,6 +41,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         this.organizationId = organizationId;
         this.clientSdkVersion = clientSdkVersion;
         resource = createRestTemplate();
+        discoveryService = new OAuth2AuthorizeDiscoveryService();
     }
 
     public void setUseParametersForClientAuthentication(boolean useParametersForClientAuthentication) {
@@ -166,16 +167,16 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
 
     private String buildAuthUrl(String baseAuthUrl, GrantType grantType, OAuth2Parameters parameters){
         StringBuilder authUrl = new StringBuilder(baseAuthUrl);
+        authUrl.append("?client_id=").append(clientId);
         if (grantType == GrantType.AUTHORIZATION_CODE) {
             authUrl.append('&').append("response_type").append('=').append("code");
         } else if (grantType == GrantType.IMPLICIT_GRANT) {
             authUrl.append('&').append("response_type").append('=').append("token");
         }
-        for (Iterator<Map.Entry<String, List<String>>> additionalParams = parameters.entrySet().iterator(); additionalParams.hasNext();) {
-            Map.Entry<String, List<String>> param = additionalParams.next();
+        for (Map.Entry<String, List<String>> param : parameters.entrySet()) {
             String name = formEncode(param.getKey());
-            for (Iterator<String> values = param.getValue().iterator(); values.hasNext();) {
-                authUrl.append('&').append(name).append('=').append(formEncode(values.next()));
+            for (String s : param.getValue()) {
+                authUrl.append('&').append(name).append('=').append(formEncode(s));
             }
         }
         return authUrl.toString();
@@ -193,7 +194,6 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     }
 
     private String exchangeForAccessTokenUri() {
-        OAuth2AuthorizeDiscoveryService discoveryService = new OAuth2AuthorizeDiscoveryService();
         AuthorizeEndpoint endpoint = discoveryService.exchangeForAuthorizeUri(organizationId, crmVersion, clientSdkVersion);
         return endpoint.parseTokenUri();
     }

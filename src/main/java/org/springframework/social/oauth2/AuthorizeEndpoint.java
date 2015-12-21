@@ -1,4 +1,4 @@
-package org.springframework.social.dynamicscrm.rest;
+package org.springframework.social.oauth2;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

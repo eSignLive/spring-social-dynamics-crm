@@ -1,7 +1,6 @@
 package org.springframework.social.oauth2;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.social.dynamicscrm.rest.AuthorizeEndpoint;
 import org.springframework.social.dynamicscrm.rest.errorhandling.DynamicsCrmRestTemplateErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
