@@ -8,11 +8,11 @@ import java.util.regex.Pattern;
  *
  * @author paul_smelser@silanis.com
  */
-public class AuthorizeEndpoint {
+public class OAuth2Endpoints {
     private String authUrl;
     private String resourceId;
 
-    private AuthorizeEndpoint(String authUrl, String resourceId){
+    private OAuth2Endpoints(String authUrl, String resourceId){
         this.authUrl = authUrl;
         this.resourceId = resourceId;
     }
@@ -24,12 +24,12 @@ public class AuthorizeEndpoint {
         return resourceId;
     }
 
-    public static AuthorizeEndpoint parseAuthUrl(String response) {
+    public static OAuth2Endpoints parseAuthUrl(String response) {
         Pattern r = Pattern.compile("authorization_uri=(\\S*),\\s*resource_id=(\\S*)");
         Matcher m = r.matcher(response);
         m.find();
 
-        return new AuthorizeEndpoint(m.group(1), m.group(2));
+        return new OAuth2Endpoints(m.group(1), m.group(2));
     }
 
     public String parseTenantId() {

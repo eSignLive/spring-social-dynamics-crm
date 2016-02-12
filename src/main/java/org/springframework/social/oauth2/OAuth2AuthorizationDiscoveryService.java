@@ -9,22 +9,22 @@ import org.springframework.web.client.RestTemplate;
  *
  * @author paul_smelser@silanis.com
  */
-public class OAuth2AuthorizeDiscoveryService {
+public class OAuth2AuthorizationDiscoveryService {
     public static final String PROTOCOL = "https://";
     public static final String XRM_SERVICES_PATH = ".crm.dynamics.com/XRMServices/";
     public static final String ORGANIZATION_PATH = "/Organization.svc/web?SdkClientVersion=";
     public RestTemplate template;
 
-    public OAuth2AuthorizeDiscoveryService() {
+    public OAuth2AuthorizationDiscoveryService() {
         template = new RestTemplate();
         template.setErrorHandler(new DynamicsCrmRestTemplateErrorHandler());
     }
 
-    public AuthorizeEndpoint exchangeForAuthorizeUri(String organizationId, int crmVersion, String clientSdkVersion) {
+    public OAuth2Endpoints exchangeForAuthorizeEndpoint(String organizationId, int crmVersion, String clientSdkVersion) {
         String targetUrl = buildDiscoveryUri(organizationId, crmVersion, clientSdkVersion);
         ResponseEntity<String> entity = template.getForEntity(targetUrl, String.class);
         String strings = entity.getHeaders().get("WWW-Authenticate").get(0);
-        return AuthorizeEndpoint.parseAuthUrl(strings);
+        return OAuth2Endpoints.parseAuthUrl(strings);
     }
 
     private String buildDiscoveryUri(String organizationId, int crmVersion, String clientSdkVersion){

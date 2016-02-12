@@ -1,5 +1,7 @@
 package org.springframework.social.oauth2;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,7 +32,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     private final int crmVersion;
     private boolean useParametersForClientAuthentication;
     private RestTemplate resource;
-    private OAuth2AuthorizeDiscoveryService discoveryService;
+    private OAuth2AuthorizationDiscoveryService discoveryService;
 
     public OAuth2DynamicsCrmTemplate(String clientId, String organizationId, int crmVersion, String clientSdkVersion) {
         this.crmVersion = crmVersion;
@@ -41,7 +43,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         this.organizationId = organizationId;
         this.clientSdkVersion = clientSdkVersion;
         resource = createRestTemplate();
-        discoveryService = new OAuth2AuthorizeDiscoveryService();
+        discoveryService = new OAuth2AuthorizationDiscoveryService();
     }
 
     public void setUseParametersForClientAuthentication(boolean useParametersForClientAuthentication) {
@@ -55,8 +57,8 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
 
     @Override
     public String buildAuthorizeUrl(GrantType grantType, OAuth2Parameters oAuth2Parameters) {
-        OAuth2AuthorizeDiscoveryService discoveryService = new OAuth2AuthorizeDiscoveryService();
-        AuthorizeEndpoint endpoint = discoveryService.exchangeForAuthorizeUri(organizationId, crmVersion, clientSdkVersion);
+        OAuth2AuthorizationDiscoveryService discoveryService = new OAuth2AuthorizationDiscoveryService();
+        OAuth2Endpoints endpoint = discoveryService.exchangeForAuthorizeEndpoint(organizationId, crmVersion, clientSdkVersion);
         return buildAuthUrl(endpoint.getAuthUrl(), grantType, oAuth2Parameters);
     }
 
@@ -80,7 +82,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         if (multiValueMap != null) {
             params.putAll(multiValueMap);
         }
-        return postForAccessGrant(exchangeForAccessTokenUri(), params);
+        OAuth2Endpoints OAuth2Endpoints = exchangeForOAuth2EndpointsEndpoint();
+        params.set("resource", OAuth2Endpoints.getResourceId());
+        return postForAccessGrant(OAuth2Endpoints.parseTokenUri(), params);
     }
 
     @Override
@@ -96,7 +100,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
             params.putAll(multiValueMap);
         }
 
-        return this.postForAccessGrant(exchangeForAccessTokenUri(), params);
+        OAuth2Endpoints OAuth2Endpoints = exchangeForOAuth2EndpointsEndpoint();
+        params.set("resource", OAuth2Endpoints.getResourceId());
+        return postForAccessGrant(OAuth2Endpoints.parseTokenUri(), params);
     }
 
     @Override
@@ -111,7 +117,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         if (multiValueMap != null) {
             params.putAll(multiValueMap);
         }
-        return postForAccessGrant(exchangeForAccessTokenUri(), params);
+        OAuth2Endpoints OAuth2Endpoints = exchangeForOAuth2EndpointsEndpoint();
+        params.set("resource", OAuth2Endpoints.getResourceId());
+        return postForAccessGrant(OAuth2Endpoints.parseTokenUri(), params);
     }
 
     @Override
@@ -123,7 +131,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         if (multiValueMap != null) {
             params.putAll(multiValueMap);
         }
-        return postForAccessGrant(exchangeForAccessTokenUri(), params);
+        OAuth2Endpoints OAuth2Endpoints = exchangeForOAuth2EndpointsEndpoint();
+        params.set("resource", OAuth2Endpoints.getResourceId());
+        return postForAccessGrant(OAuth2Endpoints.parseTokenUri(), params);
     }
 
 
@@ -145,19 +155,21 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
             params.set("scope", scope);
         }
 
-        return this.postForAccessGrant(exchangeForAccessTokenUri(), params);
+        OAuth2Endpoints OAuth2Endpoints = exchangeForOAuth2EndpointsEndpoint();
+        params.set("resource", OAuth2Endpoints.getResourceId());
+        return postForAccessGrant(OAuth2Endpoints.parseTokenUri(), params);
     }
 
     protected AccessGrant postForAccessGrant(String accessTokenUrl, MultiValueMap<String, String> parameters) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED));
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(parameters, headers);
         return extractAccessGrant(resource.postForObject(accessTokenUrl, request, Map.class));
     }
 
     private AccessGrant extractAccessGrant(Map<String, Object> result) {
-        return createAccessGrant( getValue(result ,"access_token"),  getValue(result ,"scope"), getValue(result ,"refresh_token"), getLongValue(result, "expires_in"), result);
+        return createAccessGrant((String) result.get("access_token"), (String) result.get("scope"), (String) result.get("refresh_token"), getLongValue(result, "expires_in"), result);
     }
 
     protected AccessGrant createAccessGrant(String accessToken, String scope, String refreshToken, long expiresIn, Map<String, Object> response) {
@@ -193,9 +205,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         return restTemplate;
     }
 
-    private String exchangeForAccessTokenUri() {
-        AuthorizeEndpoint endpoint = discoveryService.exchangeForAuthorizeUri(organizationId, crmVersion, clientSdkVersion);
-        return endpoint.parseTokenUri();
+    private OAuth2Endpoints exchangeForOAuth2EndpointsEndpoint() {
+        OAuth2Endpoints endpoint = discoveryService.exchangeForAuthorizeEndpoint(organizationId, crmVersion, clientSdkVersion);
+        return endpoint;
     }
 
     private String formEncode(String data) {
@@ -208,23 +220,13 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         }
     }
 
-    private String getValue(Map<String, Object> result, String key){
-        LinkedList value = (LinkedList) result.get(key);
-        if(value != null){
-            return (String) value.getFirst();
-        } else {
-            return null;
-        }
-    }
-
     private Long getLongValue(Map<String, Object> map, String key) {
         try {
-            LinkedList value = (LinkedList) map.get(key);
-            if(value != null){
-                return Long.valueOf(String.valueOf(value)); // normalize to String before creating integer value;
-            } else {
-                return null;
+            Object value = map.get(key);
+            if (value != null) {
+                return Long.valueOf(String.valueOf(map.get(key))); // normalize to String before creating integer value;
             }
+            return null;
         } catch (NumberFormatException e) {
             return null;
         }
