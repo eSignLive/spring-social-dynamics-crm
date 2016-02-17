@@ -15,6 +15,10 @@ public class DynamicsCrmConnectionFactory extends OAuth2ConnectionFactory<Dynami
         this("dynamicscrm"+ crmVersion, new DynamicsCrmServiceProvider(clientId, organizationId, crmVersion, clientSdkVersion), new DynamicsCrmAdapter());
     }
 
+    public DynamicsCrmConnectionFactory(String providerId, String clientId, String organizationId, int crmVersion, String clientSdkVersion){
+        this(providerId, new DynamicsCrmServiceProvider(clientId, organizationId, crmVersion, clientSdkVersion), new DynamicsCrmAdapter());
+    }
+
     public DynamicsCrmConnectionFactory(String clientId, String organizationId) {
         this(new DynamicsCrmServiceProvider(clientId, organizationId));
     }
