@@ -6,7 +6,7 @@
 
     <groupId>spring-social-dynamics-crm</groupId>
     <artifactId>spring-social-dynamics-crm</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.7-SNAPSHOT</version>
     <description>A library to connect and interact with Microsoft Dynamics CRM</description>
 
     <properties>
