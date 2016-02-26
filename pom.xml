@@ -4,7 +4,7 @@
 
     <groupId>spring-social-dynamics-crm</groupId>
     <artifactId>spring-social-dynamics-crm</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.7-SNAPSHOT</version>
     <description>A library to connect and interact with Microsoft Dynamics CRM</description>
 
     <properties>
@@ -127,12 +127,12 @@
         </snapshotRepository>
         <downloadUrl>http://repository.silanis.com/content/groups/libs-release</downloadUrl>
     </distributionManagement>
-    <scm>
-        <connection>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</connection>
-        <url>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</url>
-        <developerConnection>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</developerConnection>
-        <tag>release_1.0.7</tag>
-    </scm>
+    <!--<scm>-->
+        <!--<connection>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</connection>-->
+        <!--<url>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</url>-->
+        <!--<developerConnection>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</developerConnection>-->
+        <!--<tag>spring-social-dynamics-crm-@{project.version}</tag>-->
+    <!--</scm>-->
     <build>
         <plugins>
             <plugin>
