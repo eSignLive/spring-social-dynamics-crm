@@ -127,12 +127,12 @@
         </snapshotRepository>
         <downloadUrl>http://repository.silanis.com/content/groups/libs-release</downloadUrl>
     </distributionManagement>
-    <!--<scm>-->
-        <!--<connection>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</connection>-->
-        <!--<url>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</url>-->
-        <!--<developerConnection>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</developerConnection>-->
+    <scm>
+        <connection>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</connection>
+        <url>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</url>
+        <developerConnection>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</developerConnection>
         <!--<tag>spring-social-dynamics-crm-@{project.version}</tag>-->
-    <!--</scm>-->
+    </scm>
     <build>
         <plugins>
             <plugin>
