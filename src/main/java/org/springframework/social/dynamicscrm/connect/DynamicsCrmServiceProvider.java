@@ -31,7 +31,7 @@ public class DynamicsCrmServiceProvider extends AbstractOAuth2ServiceProvider<Dy
         ((OAuth2DynamicsCrmTemplate)getOAuthOperations()).setUseParametersForClientAuthentication(true);
     }
 
-    private String buildApiUrl(String organizationId, int crmVersion){
+        private String buildApiUrl(String organizationId, int crmVersion){
         return new StringBuilder(PROTOCOL)
                 .append(organizationId)
                 .append(XRM_SERVICES_PATH)

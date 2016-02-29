@@ -10,4 +10,5 @@ import org.springframework.social.ApiBinding;
 public interface DynamicsCrm extends ApiBinding {
     String PROVIDER_NAME = "dynamicscrm";
     ODataOperations oDataOperations();
+    UserOperations userOperations();
 }

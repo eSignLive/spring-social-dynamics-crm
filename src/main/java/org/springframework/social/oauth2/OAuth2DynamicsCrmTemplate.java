@@ -1,7 +1,5 @@
 package org.springframework.social.oauth2;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,7 +15,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by psmelser on 2015-12-18.
@@ -169,11 +170,11 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     }
 
     private AccessGrant extractAccessGrant(Map<String, Object> result) {
-        return createAccessGrant((String) result.get("access_token"), (String) result.get("scope"), (String) result.get("refresh_token"), getLongValue(result, "expires_in"), result);
+        return createAccessGrant((String) result.get("access_token"), (String) result.get("scope"), (String) result.get("refresh_token"), (String) result.get("id_token"), getLongValue(result, "expires_in"), result);
     }
 
-    protected AccessGrant createAccessGrant(String accessToken, String scope, String refreshToken, long expiresIn, Map<String, Object> response) {
-        return new AccessGrant(accessToken, scope, refreshToken, expiresIn);
+    protected AccessGrant createAccessGrant(String accessToken, String scope, String refreshToken, String id_token, long expiresIn, Map<String, Object> response) {
+        return new DynamicsCrmAccessGrant(accessToken, scope, refreshToken, id_token, expiresIn);
     }
 
 

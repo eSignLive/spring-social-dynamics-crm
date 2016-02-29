@@ -131,7 +131,6 @@
         <connection>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</connection>
         <url>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</url>
         <developerConnection>scm:git:git@github.com:silanis/spring-social-dynamics-crm.git</developerConnection>
-    <tag>HEAD</tag>
   </scm>
     <build>
         <plugins>

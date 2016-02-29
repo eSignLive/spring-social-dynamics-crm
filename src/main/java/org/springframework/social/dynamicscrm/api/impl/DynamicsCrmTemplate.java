@@ -7,6 +7,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.social.dynamicscrm.api.DynamicsCrm;
 import org.springframework.social.dynamicscrm.api.ODataOperations;
+import org.springframework.social.dynamicscrm.api.UserOperations;
 import org.springframework.social.dynamicscrm.rest.RestService;
 import org.springframework.social.dynamicscrm.rest.errorhandling.DynamicsCrmRestTemplateErrorHandler;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
@@ -23,12 +24,14 @@ import java.util.List;
  */
 public class DynamicsCrmTemplate extends AbstractOAuth2ApiBinding implements DynamicsCrm {
 
-    private ODataOperations notificationOperations;
+    private ODataOperations oDataOperations;
+    private UserOperations userOperations;
 
     public DynamicsCrmTemplate(String accessToken, String baseApiUrl){
         super(accessToken);
         RestService restService = new RestService(getRestTemplate());
-        notificationOperations = new ODataTemplate(restService, isAuthorized(), baseApiUrl);
+        oDataOperations = new ODataTemplate(restService, isAuthorized(), baseApiUrl);
+        userOperations = new UserTemplate(restService, isAuthorized(), baseApiUrl);
     }
 
     @Override
@@ -47,11 +50,16 @@ public class DynamicsCrmTemplate extends AbstractOAuth2ApiBinding implements Dyn
     }
     @Override
     protected void configureRestTemplate(RestTemplate restTemplate) {
-            restTemplate.setErrorHandler(new DynamicsCrmRestTemplateErrorHandler());
+        restTemplate.setErrorHandler(new DynamicsCrmRestTemplateErrorHandler());
     }
 
     @Override
     public ODataOperations oDataOperations(){
-        return notificationOperations;
+        return oDataOperations;
+    }
+
+    @Override
+    public UserOperations userOperations() {
+        return userOperations;
     }
 }

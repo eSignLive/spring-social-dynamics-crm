@@ -2,7 +2,7 @@ package org.springframework.social.dynamicscrm.connect;
 
 import org.springframework.social.connect.ApiAdapter;
 import org.springframework.social.connect.ConnectionValues;
-import org.springframework.social.connect.UserProfile;
+import org.springframework.social.connect.DynamicsCrmProfile;
 import org.springframework.social.dynamicscrm.api.DynamicsCrm;
 
 /**
@@ -18,13 +18,14 @@ public class DynamicsCrmAdapter implements ApiAdapter<DynamicsCrm> {
 
     @Override
     public void setConnectionValues(DynamicsCrm dynamicsCrm, ConnectionValues connectionValues) {
-        connectionValues.setProviderUserId("paulsmelser@silanisinc.onmicrosoft.com");
-        connectionValues.setDisplayName("psmelser");
+        DynamicsCrmProfile userProfile = dynamicsCrm.userOperations().getUserProfile();
+        connectionValues.setProviderUserId(userProfile.getUserId());
+        connectionValues.setDisplayName(userProfile.getUsername());
     }
 
     @Override
-    public UserProfile fetchUserProfile(DynamicsCrm dynamicsCrm) {
-        return null;
+    public DynamicsCrmProfile fetchUserProfile(DynamicsCrm dynamicsCrm) {
+        return dynamicsCrm.userOperations().getUserProfile();
     }
 
     @Override
