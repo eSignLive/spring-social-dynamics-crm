@@ -5,6 +5,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.social.support.ClientHttpRequestFactorySelector;
 import org.springframework.social.support.FormMapHttpMessageConverter;
@@ -44,6 +46,10 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         this.organizationId = organizationId;
         this.clientSdkVersion = clientSdkVersion;
         resource = createRestTemplate();
+        HttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
+        HttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter();
+        resource.getMessageConverters().add(formHttpMessageConverter);
+        resource.getMessageConverters().add(stringHttpMessageConverter);
         discoveryService = new OAuth2AuthorizationDiscoveryService();
     }
 
