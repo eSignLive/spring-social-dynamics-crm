@@ -12,32 +12,19 @@ import org.springframework.social.oauth2.OAuth2DynamicsCrmTemplate;
  */
 public class DynamicsCrmServiceProvider extends AbstractOAuth2ServiceProvider<DynamicsCrm> {
 
-    public static final String PROTOCOL = "https://";
-    public static final String XRM_SERVICES_PATH = ".crm.dynamics.com/XRMServices/";
-    public static final String ORGANIZATION_SERVICE_PATH = "/Organization.svc";
     private String apiUrl;
 
-    public DynamicsCrmServiceProvider(String clientId, String organizationId) {
-        this(clientId, organizationId, 2011, "6.1.0.533");
-    }
-
-    public DynamicsCrmServiceProvider(String clientId, String organizationId, int crmVersion, String clientSdkVersion) {
-        this(new OAuth2DynamicsCrmTemplate(clientId, organizationId, crmVersion, clientSdkVersion));
-        apiUrl = buildApiUrl(organizationId, 2011);
+    public DynamicsCrmServiceProvider(String clientId,
+                                      int crmVersion,
+                                      String apiUrl,
+                                      String url) {
+        this(new OAuth2DynamicsCrmTemplate(clientId, crmVersion, url));
+        this.apiUrl = apiUrl;
     }
 
     private DynamicsCrmServiceProvider(OAuth2DynamicsCrmTemplate template){
         super(template);
         ((OAuth2DynamicsCrmTemplate)getOAuthOperations()).setUseParametersForClientAuthentication(true);
-    }
-
-        private String buildApiUrl(String organizationId, int crmVersion){
-        return new StringBuilder(PROTOCOL)
-                .append(organizationId)
-                .append(XRM_SERVICES_PATH)
-                .append(crmVersion)
-                .append(ORGANIZATION_SERVICE_PATH)
-                .toString();
     }
 
     @Override

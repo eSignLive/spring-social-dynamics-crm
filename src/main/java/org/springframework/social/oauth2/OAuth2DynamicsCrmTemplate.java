@@ -28,21 +28,18 @@ import java.util.Map;
 public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
 
     private final String clientId;
-    private final String organizationId;
-    private final String clientSdkVersion;
     private final int crmVersion;
     private boolean useParametersForClientAuthentication;
+    private String url;
     private RestTemplate resource;
     private OAuth2AuthorizationDiscoveryService discoveryService;
 
-    public OAuth2DynamicsCrmTemplate(String clientId, String organizationId, int crmVersion, String clientSdkVersion) {
+    public OAuth2DynamicsCrmTemplate(String clientId, int crmVersion, String url) {
         this.crmVersion = crmVersion;
         Assert.notNull(clientId, "The clientId property cannot be null");
-        Assert.notNull(organizationId, "The organizationId property cannot be null");
-        Assert.notNull(clientSdkVersion, "The clientSdkVersion property cannot be null");
+        Assert.notNull(url, "The url property cannot be null");
         this.clientId = clientId;
-        this.organizationId = organizationId;
-        this.clientSdkVersion = clientSdkVersion;
+        this.url = url;
         resource = createRestTemplate();
         discoveryService = new OAuth2AuthorizationDiscoveryService();
     }
@@ -59,7 +56,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     @Override
     public String buildAuthorizeUrl(GrantType grantType, OAuth2Parameters oAuth2Parameters) {
         OAuth2AuthorizationDiscoveryService discoveryService = new OAuth2AuthorizationDiscoveryService();
-        OAuth2Endpoints endpoint = discoveryService.exchangeForAuthorizeEndpoint(organizationId, crmVersion, clientSdkVersion);
+        OAuth2Endpoints endpoint = discoveryService.exchangeForAuthorizeEndpoint(url, crmVersion);
         return buildAuthUrl(endpoint.getAuthUrl(), grantType, oAuth2Parameters);
     }
 
@@ -208,7 +205,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     }
 
     private OAuth2Endpoints exchangeForOAuth2EndpointsEndpoint() {
-        OAuth2Endpoints endpoint = discoveryService.exchangeForAuthorizeEndpoint(organizationId, crmVersion, clientSdkVersion);
+        OAuth2Endpoints endpoint = discoveryService.exchangeForAuthorizeEndpoint(url, crmVersion);
         return endpoint;
     }
 

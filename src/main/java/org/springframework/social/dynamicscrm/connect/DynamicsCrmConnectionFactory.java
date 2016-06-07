@@ -11,22 +11,16 @@ import org.springframework.social.oauth2.OAuth2ServiceProvider;
  * @author paul_smelser@silanis.com
  */
 public class DynamicsCrmConnectionFactory extends OAuth2ConnectionFactory<DynamicsCrm> {
-    public DynamicsCrmConnectionFactory(String clientId, String organizationId, int crmVersion, String clientSdkVersion){
-        this("dynamicscrm"+ crmVersion, new DynamicsCrmServiceProvider(clientId, organizationId, crmVersion, clientSdkVersion), new DynamicsCrmAdapter());
+    public DynamicsCrmConnectionFactory(String clientId, String apiUrl, String url){
+        this("dynamicscrm", new DynamicsCrmServiceProvider(clientId, 2011, apiUrl, url), new DynamicsCrmAdapter());
     }
 
-    public DynamicsCrmConnectionFactory(String providerId, String clientId, String organizationId, int crmVersion, String clientSdkVersion){
-        this(providerId, new DynamicsCrmServiceProvider(clientId, organizationId, crmVersion, clientSdkVersion), new DynamicsCrmAdapter());
-    }
 
-    public DynamicsCrmConnectionFactory(String clientId, String organizationId) {
-        this(new DynamicsCrmServiceProvider(clientId, organizationId));
-    }
     public DynamicsCrmConnectionFactory(String providerId, OAuth2ServiceProvider<DynamicsCrm> serviceProvider, ApiAdapter<DynamicsCrm> apiAdapter) {
         super(providerId, serviceProvider, apiAdapter);
     }
 
     private DynamicsCrmConnectionFactory(OAuth2ServiceProvider<DynamicsCrm> serviceProvider){
-        this("dynamics2011", serviceProvider, new DynamicsCrmAdapter());
+        this("dynamicscrm", serviceProvider, new DynamicsCrmAdapter());
     }
 }
