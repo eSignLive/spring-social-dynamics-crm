@@ -20,8 +20,8 @@ public class RestService {
         this.restTemplate = restTemplate;
     }
 
-    public <T> T get(String url, ParameterizedTypeReference<T> responseType) {
-        return restTemplate.exchange(URI.create(url), HttpMethod.GET, null, responseType).getBody();
+    public <T> T get(URI url, ParameterizedTypeReference<T> responseType) {
+        return restTemplate.exchange(url, HttpMethod.GET, null, responseType).getBody();
     }
 
     public <T> T get(URI url, Class<T> responseType) {
@@ -30,8 +30,8 @@ public class RestService {
 
     }
 
-    public <T> T post(String url, ParameterizedTypeReference<T> responseType) {
-        return restTemplate.exchange(URI.create(url), HttpMethod.POST, HttpEntity.EMPTY, responseType).getBody();
+    public <T> T post(URI url, ParameterizedTypeReference<T> responseType) {
+        return restTemplate.exchange(url, HttpMethod.POST, HttpEntity.EMPTY, responseType).getBody();
     }
 
     public <T, R> ResponseEntity<R> post(URI uri, HttpEntity<T> entity, Class<R> responseType) {
