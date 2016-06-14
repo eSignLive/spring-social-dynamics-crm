@@ -4,6 +4,8 @@ import org.springframework.social.connect.DynamicsCrmProfile;
 import org.springframework.social.dynamicscrm.api.UserOperations;
 import org.springframework.social.dynamicscrm.rest.RestService;
 
+import java.net.URI;
+
 /**
  * Created by psmelser on 2016-02-28.
  *
@@ -23,6 +25,6 @@ public class UserTemplate extends AbstractTemplate implements UserOperations {
     @Override
     public DynamicsCrmProfile getUserProfile() {
         checkAuthorization();
-        return restService.get(baseUri + "/whoami", DynamicsCrmProfile.class);
+        return restService.get(URI.create(baseUri + "/whoami"), DynamicsCrmProfile.class);
     }
 }
