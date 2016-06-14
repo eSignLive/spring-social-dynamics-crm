@@ -28,18 +28,19 @@ import java.util.Map;
 public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
 
     private final String clientId;
-    private final int crmVersion;
     private boolean useParametersForClientAuthentication;
     private String url;
+    private String clientSdkVersion;
     private RestTemplate resource;
     private OAuth2AuthorizationDiscoveryService discoveryService;
 
-    public OAuth2DynamicsCrmTemplate(String clientId, int crmVersion, String url) {
-        this.crmVersion = crmVersion;
+    public OAuth2DynamicsCrmTemplate(String clientId, String url, String clientSdkVersion) {
         Assert.notNull(clientId, "The clientId property cannot be null");
         Assert.notNull(url, "The url property cannot be null");
+        Assert.notNull(clientSdkVersion, "The clientSdkVersion property cannot be null");
         this.clientId = clientId;
-        this.url = url;
+        this.clientSdkVersion = clientSdkVersion;
+        this.url = ensureTrailingSlashInBaseUrl(url);
         resource = createRestTemplate();
         discoveryService = new OAuth2AuthorizationDiscoveryService();
     }
@@ -56,7 +57,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     @Override
     public String buildAuthorizeUrl(GrantType grantType, OAuth2Parameters oAuth2Parameters) {
         OAuth2AuthorizationDiscoveryService discoveryService = new OAuth2AuthorizationDiscoveryService();
-        OAuth2Endpoints endpoint = discoveryService.exchangeForAuthorizeEndpoint(url, crmVersion);
+        OAuth2Endpoints endpoint = discoveryService.exchangeForAuthorizeEndpoint(url, clientSdkVersion);
         return buildAuthUrl(endpoint.getAuthUrl(), grantType, oAuth2Parameters);
     }
 
@@ -205,7 +206,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     }
 
     private OAuth2Endpoints exchangeForOAuth2EndpointsEndpoint() {
-        OAuth2Endpoints endpoint = discoveryService.exchangeForAuthorizeEndpoint(url, crmVersion);
+        OAuth2Endpoints endpoint = discoveryService.exchangeForAuthorizeEndpoint(url, clientSdkVersion);
         return endpoint;
     }
 
@@ -231,5 +232,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         }
     }
 
+    private String ensureTrailingSlashInBaseUrl(String apiUrl) {
+        if(!apiUrl.endsWith("/")){ apiUrl = apiUrl + "/"; }
+        return apiUrl;
+    }
 
 }

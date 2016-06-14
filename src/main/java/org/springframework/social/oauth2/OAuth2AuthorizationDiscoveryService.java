@@ -10,8 +10,7 @@ import org.springframework.web.client.RestTemplate;
  * @author paul_smelser@silanis.com
  */
 public class OAuth2AuthorizationDiscoveryService {
-    public static final String XRM_SERVICES_PATH = "XRMServices/";
-    public static final String ORGANIZATION_PATH = "/Organization.svc";
+    public static final String DISCOVERY_SERVICE_PATH = "XRMServices/2011/Organization.svc/web?SdkClientVersion=";
     public RestTemplate template;
 
     public OAuth2AuthorizationDiscoveryService() {
@@ -19,18 +18,17 @@ public class OAuth2AuthorizationDiscoveryService {
         template.setErrorHandler(new DynamicsCrmRestTemplateErrorHandler());
     }
 
-    public OAuth2Endpoints exchangeForAuthorizeEndpoint(String organizationId, int crmVersion) {
-        String targetUrl = buildDiscoveryUri(organizationId, crmVersion);
+    public OAuth2Endpoints exchangeForAuthorizeEndpoint(String url, String clientSdkVersion) {
+        String targetUrl = buildDiscoveryUri(url, clientSdkVersion);
         ResponseEntity<String> entity = template.getForEntity(targetUrl, String.class);
         String strings = entity.getHeaders().get("WWW-Authenticate").get(0);
         return OAuth2Endpoints.parseAuthUrl(strings);
     }
 
-    private String buildDiscoveryUri(String url, int crmVersion){
+    private String buildDiscoveryUri(String url, String clientSdkVersion){
         return new StringBuilder(url)
-                .append(XRM_SERVICES_PATH)
-                .append(crmVersion)
-                .append(ORGANIZATION_PATH)
+                .append(DISCOVERY_SERVICE_PATH)
+                .append(clientSdkVersion)
                 .toString();
     }
 }

@@ -8,8 +8,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
-import static java.lang.String.format;
-
 /**
  * Created by psmelser on 2015-11-20.
  *
@@ -26,8 +24,8 @@ public class RestService {
         return restTemplate.exchange(URI.create(url), HttpMethod.GET, null, responseType).getBody();
     }
 
-    public <T> T get(String url, Class<T> responseType) {
-        ResponseEntity<T> body = restTemplate.exchange(URI.create(url), HttpMethod.GET, null, responseType);
+    public <T> T get(URI url, Class<T> responseType) {
+        ResponseEntity<T> body = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
         return body.getBody();
 
     }
@@ -36,12 +34,11 @@ public class RestService {
         return restTemplate.exchange(URI.create(url), HttpMethod.POST, HttpEntity.EMPTY, responseType).getBody();
     }
 
-    public <T, R> R post(String baseUrl, String path, HttpEntity<T> entity, Class<R> responseType) {
+    public <T, R> ResponseEntity<R> post(URI uri, HttpEntity<T> entity, Class<R> responseType) {
         return restTemplate.exchange(
-                URI.create(format("%s/%s", baseUrl, path.replace("/", ""))),
+                uri,
                 HttpMethod.POST,
                 entity,
-                responseType)
-                .getBody();
+                responseType);
     }
 }

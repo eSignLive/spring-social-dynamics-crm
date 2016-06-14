@@ -15,11 +15,16 @@ public class DynamicsCrmServiceProvider extends AbstractOAuth2ServiceProvider<Dy
     private String apiUrl;
 
     public DynamicsCrmServiceProvider(String clientId,
-                                      int crmVersion,
                                       String apiUrl,
-                                      String url) {
-        this(new OAuth2DynamicsCrmTemplate(clientId, crmVersion, url));
-        this.apiUrl = apiUrl;
+                                      String url,
+                                      String clientSdkVersion) {
+        this(new OAuth2DynamicsCrmTemplate(clientId, url, clientSdkVersion));
+        this.apiUrl = ensureTrailingSlashInBaseUrl(apiUrl);
+    }
+
+    private String ensureTrailingSlashInBaseUrl(String apiUrl) {
+        if(!apiUrl.endsWith("/")){ apiUrl = apiUrl + "/"; }
+        return apiUrl;
     }
 
     private DynamicsCrmServiceProvider(OAuth2DynamicsCrmTemplate template){

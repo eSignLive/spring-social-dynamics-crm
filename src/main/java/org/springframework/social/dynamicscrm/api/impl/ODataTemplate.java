@@ -3,11 +3,15 @@ package org.springframework.social.dynamicscrm.api.impl;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.social.dynamicscrm.api.ODataOperations;
 import org.springframework.social.dynamicscrm.api.domain.odata.ODataQuery;
+import org.springframework.social.dynamicscrm.connect.url.DefaultDynamicsUrlProvider;
 import org.springframework.social.dynamicscrm.rest.RestService;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 
 /**
@@ -27,11 +31,18 @@ public class  ODataTemplate extends AbstractTemplate implements ODataOperations 
     }
 
     @Override
-    public <T, R> R post(String entityPath, T entity, Class<R> responseType) {
+    public <T, R> ResponseEntity<R> post(String entityPath, T entity, Class<R> responseType) {
         checkAuthorization();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentType(MediaType.APPLICATION_JSON);
-        return restService.post(baseUrl, entityPath, new HttpEntity<T>(entity, responseHeaders), responseType);
+        return restService.post(
+                UriComponentsBuilder
+                        .fromUriString(baseUrl)
+                        .pathSegment(DefaultDynamicsUrlProvider.API_PATH, entityPath)
+                        .build()
+                        .toUri(),
+                new HttpEntity<T>(entity, responseHeaders),
+                responseType);
     }
 
     public <T> T get(String entityPath, Class<T> responseType, ODataQuery oDataQuery){
@@ -40,10 +51,10 @@ public class  ODataTemplate extends AbstractTemplate implements ODataOperations 
         if (oDataQuery != null) {
             return restService.get(createUrl(entityPath, oDataQuery), responseType);
         }
-        return restService.get(entityPath, responseType);
+        return restService.get(URI.create(entityPath), responseType);
     }
 
-    String createUrl(String url, ODataQuery oDataQuery) {
+    URI createUrl(String url, ODataQuery oDataQuery) {
 
         if (oDataQuery.any()) {
             url += "?" + oDataQuery.next();
@@ -55,10 +66,11 @@ public class  ODataTemplate extends AbstractTemplate implements ODataOperations 
         }
         try {
             url = URLEncoder.encode(url, "UTF-8");
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return url;
+        return URI.create(url);
     }
 
 
