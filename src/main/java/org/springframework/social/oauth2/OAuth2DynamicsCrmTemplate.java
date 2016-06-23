@@ -12,6 +12,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by psmelser on 2015-12-18.
@@ -27,14 +29,14 @@ import java.util.Map;
  */
 public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
 
-    private final String clientId;
+    private final UUID clientId;
     private boolean useParametersForClientAuthentication;
     private String url;
     private String clientSdkVersion;
     private RestTemplate resource;
     private OAuth2AuthorizationDiscoveryService discoveryService;
 
-    public OAuth2DynamicsCrmTemplate(String clientId, String url, String clientSdkVersion) {
+    public OAuth2DynamicsCrmTemplate(UUID clientId, String url, String clientSdkVersion) {
         Assert.notNull(clientId, "The clientId property cannot be null");
         Assert.notNull(url, "The url property cannot be null");
         Assert.notNull(clientSdkVersion, "The clientSdkVersion property cannot be null");
@@ -74,7 +76,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     @Override
     public AccessGrant exchangeForAccess(String authorizationCode, String redirectUri, MultiValueMap<String, String> multiValueMap) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-        params.set("client_id", clientId);
+        params.set("client_id", clientId.toString());
         params.set("code", authorizationCode);
         params.set("redirect_uri", redirectUri);
         params.set("grant_type", "authorization_code");
@@ -107,7 +109,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     @Override
     public AccessGrant refreshAccess(String refreshToken, String scope, MultiValueMap<String, String> multiValueMap) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-        params.set("client_id", clientId);
+        params.set("client_id", clientId.toString());
         params.set("refresh_token", refreshToken);
         if (scope != null) {
             params.set("scope", scope);
@@ -124,7 +126,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     @Override
     public AccessGrant refreshAccess(String refreshToken, MultiValueMap<String, String> multiValueMap) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-        params.set("client_id", clientId);
+        params.set("client_id", clientId.toString());
         params.set("refresh_token", refreshToken);
         params.set("grant_type", "refresh_token");
         if (multiValueMap != null) {
@@ -177,21 +179,17 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     }
 
 
-    private String buildAuthUrl(String baseAuthUrl, GrantType grantType, OAuth2Parameters parameters){
-        StringBuilder authUrl = new StringBuilder(baseAuthUrl);
-        authUrl.append("?client_id=").append(clientId);
-        if (grantType == GrantType.AUTHORIZATION_CODE) {
-            authUrl.append('&').append("response_type").append('=').append("code");
-        } else if (grantType == GrantType.IMPLICIT_GRANT) {
-            authUrl.append('&').append("response_type").append('=').append("token");
-        }
+    String buildAuthUrl(String baseAuthUrl, GrantType grantType, OAuth2Parameters parameters){
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(baseAuthUrl)
+                .queryParam("client_id", clientId)
+                .queryParam("response_type", grantType == GrantType.AUTHORIZATION_CODE ? "code" : "token");
         for (Map.Entry<String, List<String>> param : parameters.entrySet()) {
             String name = formEncode(param.getKey());
             for (String s : param.getValue()) {
-                authUrl.append('&').append(name).append('=').append(formEncode(s));
+                uriComponentsBuilder.queryParam(name, formEncode(s));
             }
         }
-        return authUrl.toString();
+        return uriComponentsBuilder.build().toUriString();
     }
 
     protected RestTemplate createRestTemplate() {

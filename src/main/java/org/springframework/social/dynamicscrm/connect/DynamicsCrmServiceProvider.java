@@ -5,6 +5,8 @@ import org.springframework.social.dynamicscrm.api.impl.DynamicsCrmTemplate;
 import org.springframework.social.oauth2.AbstractOAuth2ServiceProvider;
 import org.springframework.social.oauth2.OAuth2DynamicsCrmTemplate;
 
+import java.util.UUID;
+
 /**
  * Created by psmelser on 2015-11-20.
  *
@@ -14,7 +16,7 @@ public class DynamicsCrmServiceProvider extends AbstractOAuth2ServiceProvider<Dy
 
     private String apiUrl;
 
-    public DynamicsCrmServiceProvider(String clientId,
+    public DynamicsCrmServiceProvider(UUID clientId,
                                       String apiUrl,
                                       String url,
                                       String clientSdkVersion) {
