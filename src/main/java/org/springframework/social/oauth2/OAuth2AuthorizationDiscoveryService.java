@@ -18,11 +18,11 @@ public class OAuth2AuthorizationDiscoveryService {
         template.setErrorHandler(new DynamicsCrmRestTemplateErrorHandler());
     }
 
-    public OAuth2Endpoints exchangeForAuthorizeEndpoint(String url, String clientSdkVersion) {
+    public OAuth2Endpoint exchangeForAuthorizeEndpoint(String url, String clientSdkVersion) {
         String targetUrl = buildDiscoveryUri(url, clientSdkVersion);
         ResponseEntity<String> entity = template.getForEntity(targetUrl, String.class);
         String strings = entity.getHeaders().get("WWW-Authenticate").get(0);
-        return OAuth2Endpoints.parseAuthUrl(strings);
+        return OAuth2Endpoint.parseAuthUrl(strings);
     }
 
     private String buildDiscoveryUri(String url, String clientSdkVersion){

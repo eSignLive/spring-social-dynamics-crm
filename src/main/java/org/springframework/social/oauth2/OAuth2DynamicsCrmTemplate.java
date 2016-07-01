@@ -59,7 +59,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     @Override
     public String buildAuthorizeUrl(GrantType grantType, OAuth2Parameters oAuth2Parameters) {
         OAuth2AuthorizationDiscoveryService discoveryService = new OAuth2AuthorizationDiscoveryService();
-        OAuth2Endpoints endpoint = discoveryService.exchangeForAuthorizeEndpoint(url, clientSdkVersion);
+        OAuth2Endpoint endpoint = discoveryService.exchangeForAuthorizeEndpoint(url, clientSdkVersion);
         return buildAuthUrl(endpoint.getAuthUrl(), grantType, oAuth2Parameters);
     }
 
@@ -83,9 +83,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         if (multiValueMap != null) {
             params.putAll(multiValueMap);
         }
-        OAuth2Endpoints OAuth2Endpoints = exchangeForOAuth2EndpointsEndpoint();
-        params.set("resource", OAuth2Endpoints.getResourceId());
-        return postForAccessGrant(OAuth2Endpoints.parseTokenUri(), params);
+        OAuth2Endpoint OAuth2Endpoint = exchangeForOAuth2EndpointsEndpoint();
+        params.set("resource", url);
+        return postForAccessGrant(OAuth2Endpoint.parseTokenUri(), params);
     }
 
     @Override
@@ -101,9 +101,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
             params.putAll(multiValueMap);
         }
 
-        OAuth2Endpoints OAuth2Endpoints = exchangeForOAuth2EndpointsEndpoint();
-        params.set("resource", OAuth2Endpoints.getResourceId());
-        return postForAccessGrant(OAuth2Endpoints.parseTokenUri(), params);
+        OAuth2Endpoint OAuth2Endpoint = exchangeForOAuth2EndpointsEndpoint();
+        params.set("resource", url);
+        return postForAccessGrant(OAuth2Endpoint.parseTokenUri(), params);
     }
 
     @Override
@@ -118,9 +118,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         if (multiValueMap != null) {
             params.putAll(multiValueMap);
         }
-        OAuth2Endpoints OAuth2Endpoints = exchangeForOAuth2EndpointsEndpoint();
-        params.set("resource", OAuth2Endpoints.getResourceId());
-        return postForAccessGrant(OAuth2Endpoints.parseTokenUri(), params);
+        OAuth2Endpoint OAuth2Endpoint = exchangeForOAuth2EndpointsEndpoint();
+        params.set("resource", url);
+        return postForAccessGrant(OAuth2Endpoint.parseTokenUri(), params);
     }
 
     @Override
@@ -132,9 +132,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         if (multiValueMap != null) {
             params.putAll(multiValueMap);
         }
-        OAuth2Endpoints OAuth2Endpoints = exchangeForOAuth2EndpointsEndpoint();
-        params.set("resource", OAuth2Endpoints.getResourceId());
-        return postForAccessGrant(OAuth2Endpoints.parseTokenUri(), params);
+        OAuth2Endpoint OAuth2Endpoint = exchangeForOAuth2EndpointsEndpoint();
+        params.set("resource", url);
+        return postForAccessGrant(OAuth2Endpoint.parseTokenUri(), params);
     }
 
 
@@ -156,9 +156,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
             params.set("scope", scope);
         }
 
-        OAuth2Endpoints OAuth2Endpoints = exchangeForOAuth2EndpointsEndpoint();
-        params.set("resource", OAuth2Endpoints.getResourceId());
-        return postForAccessGrant(OAuth2Endpoints.parseTokenUri(), params);
+        OAuth2Endpoint OAuth2Endpoint = exchangeForOAuth2EndpointsEndpoint();
+        params.set("resource", url);
+        return postForAccessGrant(OAuth2Endpoint.parseTokenUri(), params);
     }
 
     protected AccessGrant postForAccessGrant(String accessTokenUrl, MultiValueMap<String, String> parameters) {
@@ -203,8 +203,8 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         return restTemplate;
     }
 
-    private OAuth2Endpoints exchangeForOAuth2EndpointsEndpoint() {
-        OAuth2Endpoints endpoint = discoveryService.exchangeForAuthorizeEndpoint(url, clientSdkVersion);
+    private OAuth2Endpoint exchangeForOAuth2EndpointsEndpoint() {
+        OAuth2Endpoint endpoint = discoveryService.exchangeForAuthorizeEndpoint(url, clientSdkVersion);
         return endpoint;
     }
 
