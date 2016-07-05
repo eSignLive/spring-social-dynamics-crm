@@ -15,21 +15,21 @@ class OAuth2EndpointTest extends Specification {
     private final String wwwAuthenticateHeader = "Bearer authorization_uri=https://login.windows.net/2eccf943-33fb-4893-8f20-3e73cf4414c4/oauth2/authorize";
     private final String wwwAuthenticateHeaderWithResourceId = "Bearer authorization_uri=https://login.windows.net/2eccf943-33fb-4893-8f20-3e73cf4414c4/oauth2/authorize, resource_id=https://silanisinc.crm.dynamics.com/";
 
-    def "when authorize url is parsed from discovery service the correct url is returned"() {
+    def "When authorize url is parsed from discovery service the correct url is returned"() {
         when:
             def authUrl = OAuth2Endpoint.parseAuthUrl(wwwAuthenticateHeader, DEFAULT_RESOURCE_ID).getAuthUrl()
         then:
             assertEquals(EXPECTED_AUTHORIZE_URI, authUrl);
     }
 
-    def "when parsing the tenant Id from the url the correct value is retrieved"() {
+    def "When parsing the tenant Id from the url the correct value is retrieved"() {
         when:
             def tenantId = OAuth2Endpoint.parseAuthUrl(wwwAuthenticateHeader, DEFAULT_RESOURCE_ID).parseTenantId()
         then:
             assertEquals("2eccf943-33fb-4893-8f20-3e73cf4414c4", tenantId)
     }
 
-    def "when the token uri is parsed from the discovery service the correct url is returned"() {
+    def "When the token uri is parsed from the discovery service the correct url is returned"() {
         when:
             def tokenUrl = OAuth2Endpoint.parseAuthUrl(wwwAuthenticateHeader, DEFAULT_RESOURCE_ID).parseTokenUri()
         then:
@@ -46,10 +46,10 @@ class OAuth2EndpointTest extends Specification {
     }
     def "When default resourceId is passed the urls are parsed correctly"(){
         when:
-        def endpoint = OAuth2Endpoint.parseAuthUrl(wwwAuthenticateHeaderWithResourceId, DEFAULT_RESOURCE_ID);
+            def endpoint = OAuth2Endpoint.parseAuthUrl(wwwAuthenticateHeaderWithResourceId, DEFAULT_RESOURCE_ID);
         then:
-        assertEquals(EXPECTED_AUTHORIZE_URI, endpoint.getAuthUrl());
-        assertEquals(EXPECTED_TOKEN_URI, endpoint.parseTokenUri());
-        assertEquals(EXPECTED_RESOURCE_ID, endpoint.getResourceId());
+            assertEquals(EXPECTED_AUTHORIZE_URI, endpoint.getAuthUrl());
+            assertEquals(EXPECTED_TOKEN_URI, endpoint.parseTokenUri());
+            assertEquals(EXPECTED_RESOURCE_ID, endpoint.getResourceId());
     }
 }
