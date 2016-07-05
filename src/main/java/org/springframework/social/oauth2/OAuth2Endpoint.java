@@ -3,6 +3,8 @@ package org.springframework.social.oauth2;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Objects.nonNull;
+
 /**
  * Created by psmelser on 2015-12-18.
  *
@@ -10,20 +12,22 @@ import java.util.regex.Pattern;
  */
 public class OAuth2Endpoint {
     private String authUrl;
-
-    private OAuth2Endpoint(String authUrl){
+    private String resourceId;
+    private OAuth2Endpoint(String authUrl, String resourceId){
         this.authUrl = authUrl;
+        this.resourceId = resourceId;
     }
+
     public String getAuthUrl() {
         return authUrl;
     }
 
-    public static OAuth2Endpoint parseAuthUrl(String response) {
-        Pattern r = Pattern.compile("authorization_uri=(\\S*)");
+    public static OAuth2Endpoint parseAuthUrl(String response, String defaultResourceId) {
+        Pattern r = Pattern.compile("authorization_uri=(\\S*(?<!,))(,\\s*resource_id=(\\S*$))?");
         Matcher m = r.matcher(response);
         m.find();
 
-        return new OAuth2Endpoint(m.group(1));
+        return new OAuth2Endpoint(m.group(1), nonNull(m.group(3)) ? m.group(3) : defaultResourceId);
     }
 
     public String parseTenantId() {
@@ -35,5 +39,9 @@ public class OAuth2Endpoint {
 
     public String parseTokenUri(){
         return authUrl.replace("authorize", "token");
+    }
+
+    public String getResourceId() {
+        return resourceId;
     }
 }

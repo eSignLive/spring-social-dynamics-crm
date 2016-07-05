@@ -84,15 +84,15 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
             params.putAll(multiValueMap);
         }
         OAuth2Endpoint OAuth2Endpoint = exchangeForOAuth2EndpointsEndpoint();
-        params.set("resource", url);
+        params.set("resource", OAuth2Endpoint.getResourceId());
         return postForAccessGrant(OAuth2Endpoint.parseTokenUri(), params);
     }
 
     @Override
     public AccessGrant exchangeCredentialsForAccess(String username, String password, MultiValueMap<String, String> multiValueMap) {
-        LinkedMultiValueMap params = new LinkedMultiValueMap();
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
         if(this.useParametersForClientAuthentication) {
-            params.set("client_id", this.clientId);
+            params.set("client_id", this.clientId.toString());
         }
         params.set("username", username);
         params.set("password", password);
@@ -102,7 +102,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         }
 
         OAuth2Endpoint OAuth2Endpoint = exchangeForOAuth2EndpointsEndpoint();
-        params.set("resource", url);
+        params.set("resource", OAuth2Endpoint.getResourceId());
         return postForAccessGrant(OAuth2Endpoint.parseTokenUri(), params);
     }
 
@@ -119,7 +119,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
             params.putAll(multiValueMap);
         }
         OAuth2Endpoint OAuth2Endpoint = exchangeForOAuth2EndpointsEndpoint();
-        params.set("resource", url);
+        params.set("resource", OAuth2Endpoint.getResourceId());
         return postForAccessGrant(OAuth2Endpoint.parseTokenUri(), params);
     }
 
@@ -132,9 +132,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
         if (multiValueMap != null) {
             params.putAll(multiValueMap);
         }
-        OAuth2Endpoint OAuth2Endpoint = exchangeForOAuth2EndpointsEndpoint();
-        params.set("resource", url);
-        return postForAccessGrant(OAuth2Endpoint.parseTokenUri(), params);
+        OAuth2Endpoint oAuth2Endpoint = exchangeForOAuth2EndpointsEndpoint();
+        params.set("resource", oAuth2Endpoint.getResourceId());
+        return postForAccessGrant(oAuth2Endpoint.parseTokenUri(), params);
     }
 
 
@@ -146,9 +146,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
 
     @Override
     public AccessGrant authenticateClient(String scope) {
-        LinkedMultiValueMap params = new LinkedMultiValueMap();
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
         if(this.useParametersForClientAuthentication) {
-            params.set("client_id", this.clientId);
+            params.set("client_id", this.clientId.toString());
         }
 
         params.set("grant_type", "client_credentials");
@@ -156,9 +156,9 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
             params.set("scope", scope);
         }
 
-        OAuth2Endpoint OAuth2Endpoint = exchangeForOAuth2EndpointsEndpoint();
-        params.set("resource", url);
-        return postForAccessGrant(OAuth2Endpoint.parseTokenUri(), params);
+        OAuth2Endpoint oAuth2Endpoint = exchangeForOAuth2EndpointsEndpoint();
+        params.set("resource", oAuth2Endpoint.getResourceId());
+        return postForAccessGrant(oAuth2Endpoint.parseTokenUri(), params);
     }
 
     protected AccessGrant postForAccessGrant(String accessTokenUrl, MultiValueMap<String, String> parameters) {
@@ -204,8 +204,7 @@ public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
     }
 
     private OAuth2Endpoint exchangeForOAuth2EndpointsEndpoint() {
-        OAuth2Endpoint endpoint = discoveryService.exchangeForAuthorizeEndpoint(url, clientSdkVersion);
-        return endpoint;
+        return discoveryService.exchangeForAuthorizeEndpoint(url, clientSdkVersion);
     }
 
     private String formEncode(String data) {

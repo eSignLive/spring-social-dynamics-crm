@@ -22,7 +22,7 @@ public class OAuth2AuthorizationDiscoveryService {
         String targetUrl = buildDiscoveryUri(url, clientSdkVersion);
         ResponseEntity<String> entity = template.getForEntity(targetUrl, String.class);
         String strings = entity.getHeaders().get("WWW-Authenticate").get(0);
-        return OAuth2Endpoint.parseAuthUrl(strings);
+        return OAuth2Endpoint.parseAuthUrl(strings, url);
     }
 
     private String buildDiscoveryUri(String url, String clientSdkVersion){
