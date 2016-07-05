@@ -3,8 +3,6 @@ package org.springframework.social.oauth2;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.Objects.nonNull;
-
 /**
  * Created by psmelser on 2015-12-18.
  *
@@ -27,7 +25,11 @@ public class OAuth2Endpoint {
         Matcher m = r.matcher(response);
         m.find();
 
-        return new OAuth2Endpoint(m.group(1), nonNull(m.group(3)) ? m.group(3) : defaultResourceId);
+        return new OAuth2Endpoint(m.group(1), getResourceId(defaultResourceId, m));
+    }
+
+    private static String getResourceId(String defaultResourceId, Matcher m) {
+        return m.group(3) != null ? m.group(3) : defaultResourceId;
     }
 
     public String parseTenantId() {
