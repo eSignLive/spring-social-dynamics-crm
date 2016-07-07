@@ -1,5 +1,8 @@
 package org.springframework.social.oauth2;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,6 +12,7 @@ import java.util.regex.Pattern;
  * @author paul_smelser@silanis.com
  */
 public class OAuth2Endpoint {
+    private static Logger logger = LoggerFactory.getLogger(OAuth2Endpoint.class);
     private String authUrl;
     private String resourceId;
     private OAuth2Endpoint(String authUrl, String resourceId){
@@ -21,11 +25,17 @@ public class OAuth2Endpoint {
     }
 
     public static OAuth2Endpoint parseAuthUrl(String response, String defaultResourceId) {
-        Pattern r = Pattern.compile("authorization_uri=(\\S*(?<!,))(,\\s*resource_id=(\\S*$))?");
-        Matcher m = r.matcher(response);
-        m.find();
+        logger.debug("Parsing Authorization from WWW-Authenticate header: "+ response);
+        try {
+            Pattern r = Pattern.compile("authorization_uri=(\\S*(?<!,))(,\\s*resource_id=(\\S*$))?");
+            Matcher m = r.matcher(response);
+            m.find();
+            return new OAuth2Endpoint(m.group(1), getResourceId(defaultResourceId, m));
+        }catch(RuntimeException e){
+            logger.error("Could not parse Authorization URI from OAuth2DiscoveryService response", e);
+            throw e;
+        }
 
-        return new OAuth2Endpoint(m.group(1), getResourceId(defaultResourceId, m));
     }
 
     private static String getResourceId(String defaultResourceId, Matcher m) {
