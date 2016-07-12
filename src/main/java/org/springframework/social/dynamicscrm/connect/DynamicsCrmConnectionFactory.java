@@ -14,7 +14,7 @@ import java.util.UUID;
  * @author paul_smelser@silanis.com
  */
 public class DynamicsCrmConnectionFactory extends OAuth2ConnectionFactory<DynamicsCrm> {
-    public DynamicsCrmConnectionFactory(UUID clientId, String apiUrl, String url, String clientSdkVersion){
+    public DynamicsCrmConnectionFactory(String clientId, String apiUrl, String url, String clientSdkVersion){
         this("dynamicscrm", new DynamicsCrmServiceProvider(clientId, apiUrl, url, clientSdkVersion), new DynamicsCrmAdapter());
     }
 

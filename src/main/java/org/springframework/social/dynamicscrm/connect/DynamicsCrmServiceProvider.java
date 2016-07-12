@@ -16,7 +16,7 @@ public class DynamicsCrmServiceProvider extends AbstractOAuth2ServiceProvider<Dy
 
     private String apiUrl;
 
-    public DynamicsCrmServiceProvider(UUID clientId,
+    public DynamicsCrmServiceProvider(String clientId,
                                       String apiUrl,
                                       String url,
                                       String clientSdkVersion) {

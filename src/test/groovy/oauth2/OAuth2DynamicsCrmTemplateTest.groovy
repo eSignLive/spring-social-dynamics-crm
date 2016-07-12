@@ -10,7 +10,7 @@ class OAuth2DynamicsCrmTemplateTest extends Specification {
 
     def "when auth url is built parameters are added correctly"() {
         given:
-            UUID clientId = UUID.randomUUID();
+            String clientId = UUID.randomUUID().toString();
             def template = new OAuth2DynamicsCrmTemplate(clientId, "https://org.crm.dynamics.com", "6.0.0");
         when:
             def oauth2Params = new OAuth2Parameters();

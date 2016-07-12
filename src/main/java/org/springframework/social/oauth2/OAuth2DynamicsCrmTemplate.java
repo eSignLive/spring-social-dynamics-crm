@@ -29,14 +29,14 @@ import java.util.UUID;
  */
 public class OAuth2DynamicsCrmTemplate implements OAuth2Operations {
 
-    private final UUID clientId;
+    private final String clientId;
     private boolean useParametersForClientAuthentication;
     private String url;
     private String clientSdkVersion;
     private RestTemplate resource;
     private OAuth2AuthorizationDiscoveryService discoveryService;
 
-    public OAuth2DynamicsCrmTemplate(UUID clientId, String url, String clientSdkVersion) {
+    public OAuth2DynamicsCrmTemplate(String clientId, String url, String clientSdkVersion) {
         Assert.notNull(clientId, "The clientId property cannot be null");
         Assert.notNull(url, "The url property cannot be null");
         Assert.notNull(clientSdkVersion, "The clientSdkVersion property cannot be null");
