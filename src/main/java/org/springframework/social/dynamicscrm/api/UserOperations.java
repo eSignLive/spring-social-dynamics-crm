@@ -1,5 +1,6 @@
 package org.springframework.social.dynamicscrm.api;
 
+import com.google.common.base.Optional;
 import org.springframework.social.connect.DynamicsCrmProfile;
 
 /**
@@ -9,4 +10,5 @@ import org.springframework.social.connect.DynamicsCrmProfile;
  */
 public interface UserOperations {
     DynamicsCrmProfile getUserProfile();
+    Optional<String> internalEmailAddressOf(String windowsLiveID);
 }
